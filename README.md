@@ -17,6 +17,7 @@ The [WAI-ARIA](https://www.w3.org/TR/wai-aria-1.1/) spec is deliberately not dup
 - Interactive elements should disable `user-select` for inner content
 - Decorative elements (glows, gradients) should disable `pointer-events` to not hijack events
 - Interactive elements in a vertical or horizontal list should have no dead areas between each element, instead, increase their `padding`
+- Add focus-visible outlines only when using keyboard: `:focus-visible` > `:focus`
 
 ## Typography
 
@@ -53,6 +54,7 @@ The [WAI-ARIA](https://www.w3.org/TR/wai-aria-1.1/) spec is deliberately not dup
 - Apply `muted` and `playsinline` to `<video />` tags to auto play on iOS
 - Disable `touch-action` for custom components that implement pan and zoom gestures to prevent interference from native behavior like zooming and scrolling
 - Disable the default iOS tap highlight with `-webkit-tap-highlight-color: rgba(0,0,0,0)`, but always replace it with an appropriate alternative
+- Use `pointerdown` or `touchstart` instead of click for snappier mobile tap interactions
 
 ## Optimizations
 
@@ -63,6 +65,7 @@ The [WAI-ARIA](https://www.w3.org/TR/wai-aria-1.1/) spec is deliberately not dup
 - Auto-playing too many videos on iOS will choke the device, pause or even unmount off-screen videos
 - Bypass React's render lifecycle with refs for real-time values that can commit to the DOM directly [^5]
 - [Detect and adapt](https://github.com/GoogleChromeLabs/react-adaptive-hooks) to the hardware and network capabilities of the user's device
+- Use `fetchpriority="high"` for LCP images to hint browser priority
 
 ## Accessibility
 
@@ -77,7 +80,8 @@ The [WAI-ARIA](https://www.w3.org/TR/wai-aria-1.1/) spec is deliberately not dup
 - Images should always be rendered with `<img>` for screen readers and ease of copying from the right click menu
 - Illustrations built with HTML should have an explicit `aria-label` instead of announcing the raw DOM tree to people using screen readers
 - Gradient text should unset the gradient on `::selection` state
-- When using nested menus, use a "prediction cone" to prevent the pointer from accidentally closing the menu when moving across other elements.
+- When using nested menus, use a "prediction cone" to prevent the pointer from accidentally closing the menu when moving across other elements
+- Skip to content link `<a href="#main-content">` should be one of the first interactive elements
 
 
 ## Design
@@ -89,6 +93,14 @@ The [WAI-ARIA](https://www.w3.org/TR/wai-aria-1.1/) spec is deliberately not dup
   - Show a temporary inline checkmark on a successful copy, not a notification
   - Highlight the relevant input(s) on form error(s)
 - Empty states should prompt to create a new item, with optional templates
+
+
+## Security
+
+- Use `autocomplete="off"` for sensitive fields like passwords or 2FA codes
+- For forms, explicitly set method and action even when using JS to allow fallback and improve crawlability
+- Use `rel="noopener noreferrer"` on all external links with `target="_blank"` to prevent tab hijacking
+
 
 [^1]: Switching between dark mode or light mode will trigger transitions on elements that are meant for explicit interactions like hover. We can [disable transitions temporarily](https://paco.me/writing/disable-theme-transitions) to prevent this. For Next.js, use [next-themes](https://github.com/pacocoursey/next-themes) which prevents transitions out of the box.
 [^2]: This is a matter of taste but some interactions just feel better with no motion. For example, the native macOS right click menu only animates out, not in, due to the frequent usage of it.
